@@ -5,10 +5,6 @@ const bookAuthor = document.querySelector("#author");
 const bookTitle = document.querySelector("#title");
 const bookPages = document.querySelector("#pages");
 
-let changeStatus;
-let deleteBook;
-let card;
-
 const myLibrary = [];
 
 function Book(title, author, pages, read) {
@@ -24,34 +20,31 @@ const book2 = new Book("naruto", "kishimoto", 800, "read");
 myLibrary.push(book2);
 display();
 
-function display() {
-
-    for(let i = 0; i < myLibrary.length; i++) { 
-
-       if (container.querySelector(`[data-bookNumber="${i}"]`)) {
-           continue;
-       }
-
-        card = document.createElement("div");
+function createCard(book, index) {
+        const card = document.createElement("div");
         card.classList.add("card");
-        card.setAttribute("data-bookNumber", i);
+        card.setAttribute("data-bookNumber", index);
 
-        let titleElement = document.createElement("div");
-        titleElement.textContent = myLibrary[i].title;
+        const titleElement = document.createElement("div");
+        titleElement.textContent = book.title;
         
-        let authorElement = document.createElement("div");
-        authorElement.textContent = myLibrary[i].author;
+        const authorElement = document.createElement("div");
+        authorElement.textContent = book.author;
   
-        let pagesElement = document.createElement("div");
-        pagesElement.textContent = myLibrary[i].pages;
+        const pagesElement = document.createElement("div");
+        pagesElement.textContent = book.pages;
   
-        let readElement = document.createElement("div");
-        readElement.textContent = myLibrary[i].read;
+        const readElement = document.createElement("div");
+        readElement.textContent = book.read;
+        readElement.setAttribute('id', 'readElement');
 
         changeStatus = document.createElement("button");
-        changeStatus.textContent = "change reading status"
+        changeStatus.setAttribute('id', 'changeStatusBtn');
+        changeStatus.textContent = "change reading status";
+
         deleteBook = document.createElement("button");
         deleteBook.textContent = "delete book";
+        deleteBook.setAttribute('id', 'deleteBookBtn');
 
         card.appendChild(titleElement);
         card.appendChild(authorElement);
@@ -60,54 +53,60 @@ function display() {
         card.appendChild(changeStatus);
         card.appendChild(deleteBook);
 
-        container.appendChild(card);
-
-        console.log("number of books in array: " + myLibrary.length);
-
-        card.addEventListener('click', function(event){
-          let target = event.currentTarget;
-    
-          container.removeChild(container.querySelector(`[data-bookNumber="${i}"]`));
-          myLibrary.splice(target.getAttribute("data-bookNumber") , 1);
-    
-          myLibrary.forEach((book) => {
-               console.log(book);
-             });  
-           console.log("number of books in array after deleting book: " + myLibrary.length);
-        });
-    
-
-
-      };
+        return card;
   };   
 
-  
+container.addEventListener('click', function(event){
+      if(event.target.tagName === "BUTTON") {
+                 const card = event.target.closest(".card");
+                 const index = card.getAttribute('data-bookNumber');
+    
+              if(event.target.getAttribute('id') === "deleteBookBtn"){
+                 container.removeChild(card);
+                 myLibrary.splice(index, 1);
+                 updateBookNumbers();
+                 console.log("number of books in library after deletion: " + myLibrary.length)
+              } 
+
+              else if(event.target.getAttribute('id') === "changeStatusBtn"){
+                myLibrary[index].read = myLibrary[index].read === 'read' ? 'not read' : 'read';
+                card.querySelector("#readElement").textContent = myLibrary[index].read;
+              }
+
+      };         
+});
+
+function updateBookNumbers() {
+  const cards = container.querySelectorAll('.card');
+  cards.forEach((card, index) => {
+      card.setAttribute('data-bookNumber', index);
+  });
+};
+
+function display(){
+    myLibrary.forEach((book, index)=> {
+        if(!container.querySelector(`[data-bookNumber="${index}"]`)) {
+                const card = createCard(book, index);
+                container.appendChild(card);
+          }     
+    });
+};
 
 form.addEventListener('submit', function(event){
      event.preventDefault()
 
      const bookExists = (currentbook) => {
             return currentbook.title === bookTitle.value && currentbook.author === bookAuthor.value;
-        }
+        };
 
       if(myLibrary.some(bookExists)) {
         alert("book already exists in the library")
         return;
       }
       else {
-        const bookStatus = document.querySelector('input[name="status"]:checked');
-        const userBook = new Book(bookTitle.value, bookAuthor.value, bookPages.value, bookStatus.value);
+        const readingStatus = document.querySelector('input[name="status"]:checked');
+        const userBook = new Book(bookTitle.value, bookAuthor.value, bookPages.value, readingStatus.value);
         myLibrary.push(userBook);
         display();
       }
 });
-
-
-
-
-// changeStatus.addEventListener('click', function(){
-//   targetBook = event.currentTarget;
-//   console.log(targetBook)
-//   myLibrary[i].read = targetBook.read === "read" ? "unread" : "read";
-//   readElement.textContent = myLibrary[i].read;
-// });
