@@ -1,0 +1,36 @@
+body {
+    position: relative;
+}
+
+.header {
+    outline: solid red 2px;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.card {
+    outline: solid green 2px;
+}
+
+#addBook {
+    outline: solid purple 2px;
+}
+
+#form {
+    /* display: none;  */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    outline: solid yellow 2px;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* #form div {
+    
+} */
+
+h3 {
+    margin: 0px;
+}
