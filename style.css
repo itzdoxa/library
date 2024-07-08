@@ -3,34 +3,102 @@ body {
 }
 
 .header {
-    outline: solid red 2px;
+    /* outline: solid red 2px; */
     text-align: center;
     font-size: 2rem;
 }
 
-.card {
-    outline: solid green 2px;
+#open-form {
+    font-size: 1.5rem;
+    padding: 1rem;
+    text-align: center;
 }
 
-#addBook {
-    outline: solid purple 2px;
+.close-form {
+    align-self: end;
 }
 
 #form {
-    /* display: none;  */
     display: flex;
     flex-direction: column;
-    align-items: center;
-    outline: solid yellow 2px;
-    width: fit-content;
     margin-left: auto;
     margin-right: auto;
+    gap: 15px;
+    font-size: 1.2rem;
 }
 
-/* #form div {
-    
-} */
+.flex-space-between {
+    display: flex;
+    justify-content: space-between;
+}
+
+#form button {
+    font-size: 1rem;
+}
 
 h3 {
     margin: 0px;
 }
+
+#container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 350px));
+    grid-template-rows: repeat(5, 1fr); 
+    grid-auto-rows: 1fr;
+    gap: 40px;
+    padding: 20px;
+    margin-top: 20px; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.card {
+    outline: solid black 2px;
+    padding: 1.5em;
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+}
+
+.book-title {
+    box-shadow: red -3.5px 0px;
+    font-size: 2rem;
+    padding: 0px .25em 0px .25em;
+    font-weight: 550;
+}
+
+.book-author {
+    font-weight: 400;
+}
+
+.read {
+    background-color: lightgreen;
+}
+
+.not-read {
+    background-color: lightpink;
+}
+
+.book-info {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 1em;
+}
+
+.card button {
+    font-size: 1.2rem;
+    padding: .25em;
+}
+
+/* 
+#deleteBookBtn {
+
+
+} */

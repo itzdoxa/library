@@ -9,39 +9,47 @@
 <body>
     <div class="header">
         <h1>Library</h1>
+        <button id="open-form">add book</button>
     </div>
 
-    <form action="" id="form">
 
-     <div>
-     <label for="title">title</label>
+    <dialog id="modal">
+    <form method="dialog" id="form">
+
+    <div class="close-form">
+     <img src="images/close.svg" alt="close-form">
+    </div>
+
+     <div class="flex-space-between">
+     <label for="title">TITLE</label>
      <input type="text" id="title" name="book-title" required>
      </div>
 
-     <div>
-     <label for="author">author</label>
+     <div class="flex-space-between">
+     <label for="author">AUTHOR</label>
      <input type="text" id="author" name="author" required>
      </div> 
 
-     <div>
-     <label for="pages">pages</label>
+     <div class="flex-space-between">
+     <label for="pages">PAGES</label>
      <input type="number" id="pages" name="pages" required>
      </div>
 
      <div>
-     <h3>read</h3>
+     <h3>READ</h3>
      <input type="radio" id="read" name="status" value="read" checked>
      <label for="read">read</label>
      <input type="radio" id="not-read" name="status" value="not-read">
-     <label for="not-read">not read</label>
+     <label for="not-read">not-read</label>
      </div>
     
-     <div>
-     <button type="submit" id="addBook">add book</button>
-     <button type="reset">Reset</button>
+     <div class="flex-space-between">
+     <button type="submit" id="addBook">SUBMIT</button>
+     <button type="reset">RESET</button>
     </div>
 
     </form>
+    </dialog>
 
     <div id="container"></div>
 
