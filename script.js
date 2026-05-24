@@ -1,148 +1,228 @@
-const container = document.querySelector("#container");
-const addBook = document.querySelector("#addBook");
-const form = document.querySelector("#form");
-const openForm = document.querySelector("#open-form");
-const closeForm = document.querySelector(".close-form")
-const modal = document.querySelector("#modal");
-const bookAuthor = document.querySelector("#author");
-const bookTitle = document.querySelector("#title");
-const bookPages = document.querySelector("#pages");
+const libraryContainer = document.querySelector('#library-container');
+const formDialog = document.querySelector("#form-dialog");
+const form = document.querySelector('form');
+const addBookBtn = document.querySelector('#add-book-btn');
+const resetFormBtn = document.querySelector('#reset-form-btn');
+const closeFormBtn = document.querySelector("#close-form-btn")
+const submitFormBtn = document.querySelector('#submit-form-btn');
 
-const myLibrary = [];
+let formMode = 'create';
+let editUUID = null;
 
 function Book(title, author, pages, read) {
+    this.uuid = crypto.randomUUID();
     this.title = title;
     this.author = author;
     this.pages = pages;
     this.read = read;
+}
+
+const bookTypes = {
+    title: 'string',
+    author: 'string',
+    pages: 'number',
+    read: 'boolean',
+}
+
+const myLibrary = [];
+
+function addBookToLibrary(book) { 
+    myLibrary.push(book);
+}
+
+const book1 = new Book("The Hobbit", "J.R.R. Tolkien", 295, false);
+const book2 = new Book("Dune", "Frank Herbert", 412, true);
+const book3 = new Book("1984", "George Orwell", 328, false);
+const book4 = new Book("The Great Gatsby", "F. Scott Fitzgerald", 180, true);
+const book5 = new Book("Harry Potter and the Philosopher's Stone", "J.K. Rowling", 223, true);
+const book6 = new Book("Moby Dick", "Herman Melville", 635, false);
+const book7 = new Book("Crime and Punishment", "Fyodor Dostoevsky", 671, true);
+const book8 = new Book("The Catcher in the Rye", "J.D. Salinger", 277, false);
+const book9 = new Book("Lord of the Flies", "William Golding", 224, true);
+const book10 = new Book("Brave New World", "Aldous Huxley", 311, false);
+
+addBookToLibrary(book1);
+addBookToLibrary(book2);
+addBookToLibrary(book3);
+addBookToLibrary(book4);
+addBookToLibrary(book5);
+addBookToLibrary(book6);
+addBookToLibrary(book7);
+addBookToLibrary(book8);
+addBookToLibrary(book9);
+addBookToLibrary(book10);
+
+function updateBook({uuid, ...updates}) {
+
+      const updateProps = Object.keys(updates);
+
+      const bookToUpdate = myLibrary.find((book) => book.uuid === uuid); // this already checks the type/literal string so...
+ 
+      if (!bookToUpdate) return; 
+
+        // atleast 1 property must be present in updates object 
+        if (updateProps.length < 1) return;
+
+        // check if the updates object has valid property names that match our Book Object Definition at the top
+        if (!updateProps.every(updatedProperty => Object.keys(bookTypes).includes(updatedProperty))) return;
+
+        // check if the property values are of the expected data type 
+        if (!updateProps.every(updatedProperty => typeof updates[updatedProperty] === bookTypes[updatedProperty])) return;
+
+        // compare  the values of update object props to the book prop, 
+        // such that atleast one property value is different
+        if(!updateProps.some(updatedProperty => {
+            if (typeof(updates[updatedProperty]) === 'string'){ 
+               return updates[updatedProperty].toLowerCase() !== bookToUpdate[updatedProperty].toLowerCase()
+            }
+            else return updates[updatedProperty] !== bookToUpdate[updatedProperty];
+        })) return;
+
+
+        // finally, update all props (even the ones that didnt change)
+        updateProps.forEach(updatedProperty => bookToUpdate[updatedProperty] = updates[updatedProperty])
 };
 
-const book1 = new Book("one piece", "oda", 1000, "read");
-const book2 = new Book("naruto", "kishimoto", 800, "read");
-const book3 = new Book("death note", "Takeshi Obata", 500, "read");
-const book4 = new Book("Bleach", "Tite Kubo", 900, "not-read");
-const book5 = new Book("Berserk", "Kentaro Miura", 1300, "read")
+function deleteBook(uuid) {
+    const bookToDelete = myLibrary.find((book) => book.uuid === uuid)
 
-myLibrary.push(book1, book2, book3, book4, book5);
-display();
+    if (!bookToDelete) return;
 
-function createCard(book, index) {
-        const card = document.createElement("div");
-        card.classList.add("card");
-        card.setAttribute("data-bookNumber", index);
+    const index = myLibrary.indexOf(bookToDelete);
+    myLibrary.splice(index, 1);
+}
 
-        const titleElement = document.createElement("div");
-        titleElement.textContent = book.title;
-        titleElement.classList.add("book-title");
-        
-        const authorElement = document.createElement("div");
-        authorElement.textContent = book.author;
-        authorElement.classList.add("book-author");
-  
-        const pagesElement = document.createElement("div");
-        pagesElement.textContent = book.pages;
+function getBookInfo(uuid) {
+    const book = myLibrary.find((book) => book.uuid === uuid);
 
-        const bookInfoContainer = document.createElement("div");
-        bookInfoContainer.classList.add("book-info");
+    if (!book) return;
+    return book;
+}
 
-        const buttonContainer = document.createElement('div');
-        buttonContainer.classList.add("button-container");
-  
-        const readElement = document.createElement("button");
-        readElement.textContent = book.read;
-        readElement.setAttribute('id', 'readElement');
+function renderLibrary (){
+        libraryContainer.replaceChildren(); 
 
-        deleteBook = document.createElement("button");
-        deleteBook.textContent = "delete book";
-        deleteBook.setAttribute('id', 'deleteBookBtn');
+        myLibrary.forEach(book => {
+                const card = document.createElement('div');
+                card.classList.add('card'); 
 
-        bookInfoContainer.appendChild(titleElement);
-        bookInfoContainer.appendChild(authorElement);
-        bookInfoContainer.appendChild(pagesElement);
-        
-        buttonContainer.appendChild(readElement);
-        buttonContainer.appendChild(deleteBook);
-        card.appendChild(bookInfoContainer);
-        card.appendChild(buttonContainer);
+                const authorContainer = document.createElement('div');
+                const titleContainer = document.createElement('div');
+                const pagesContainer = document.createElement('div');
 
-        return card;
-  }; 
+                const readStatusContainer = document.createElement('button'); 
+                const deleteBookBtn = document.createElement('button');
+                const editBookBtn = document.createElement('button');
 
-function display(){
-    myLibrary.forEach((book, index)=> {
-        if(!container.querySelector(`[data-bookNumber="${index}"]`)) {
-                const card = createCard(book, index);
-                container.appendChild(card);
-                const readElement = card.querySelector("#readElement");
-                colorReadElement(index, readElement);
-          };     
-    });
-};
+                card.dataset.uuid = book.uuid;
 
-function colorReadElement(index, readElement){
-        if(myLibrary[index].read === 'read') {
-            readElement.classList.add('read')
-            readElement.classList.remove('not-read')
-        } else if(myLibrary[index].read === 'not-read') {
-            readElement.classList.add('not-read')
-            readElement.classList.remove('read')
-        }
-};
+                authorContainer.textContent = book.author;
+                titleContainer.textContent = book.title;
+                pagesContainer.textContent = book.pages;
+                readStatusContainer.textContent = book.read ? 'read' : 'unread';
+                deleteBookBtn.textContent = 'Delete';
+                editBookBtn.textContent = 'Edit';
 
-function updateBookNumbers() {
-  const cards = container.querySelectorAll('.card');
-  cards.forEach((card, index) => {
-      card.setAttribute('data-bookNumber', index);
-  });
-};
+                authorContainer.classList.add('author-container');
+                titleContainer.classList.add('title-container');
+                pagesContainer.classList.add('pages-container');
+                readStatusContainer.classList.add(book.read ? 'read' : 'not-read');
 
-container.addEventListener('click', function(event){
-  if(event.target.tagName === "BUTTON") {
-             const card = event.target.closest(".card");
-             const index = card.getAttribute('data-bookNumber');
-             const readElement = card.querySelector("#readElement");
+                deleteBookBtn.dataset.action = 'delete';
+                readStatusContainer.dataset.action = 'readToggle';
+                editBookBtn.dataset.action = 'edit';
 
-          if(event.target.getAttribute('id') === "deleteBookBtn"){
-             container.removeChild(card);
-             myLibrary.splice(index, 1);
-             updateBookNumbers();
-             console.log("number of books in library after deletion: " + myLibrary.length)
-          } 
+                card.appendChild(titleContainer);
+                card.appendChild(authorContainer);
+                card.appendChild(pagesContainer);      
+                card.appendChild(readStatusContainer);
+                card.appendChild(deleteBookBtn);
+                card.appendChild(editBookBtn);
 
-          else if(event.target.getAttribute('id') === "readElement"){
-            myLibrary[index].read = myLibrary[index].read === 'read' ? 'not-read' : 'read';
-            readElement.textContent = myLibrary[index].read
-            colorReadElement(index, readElement);
-          }
+                libraryContainer.appendChild(card);
+       });
+}
 
-  };         
+renderLibrary();
+
+// add & update book (uses the same form dialog)
+form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const data = new FormData(form);
+    
+    const pages = Number(data.get('pages'));
+    const readingStatus = (data.get('reading-status') === 'read') ? true : false;
+
+    if (formMode === 'create'){
+        const book = new Book(data.get('title'), data.get('author'), pages, readingStatus);
+        addBookToLibrary(book);
+    } else if (formMode === 'edit') {
+        updateBook({uuid: editUUID, title: data.get('title'), author: data.get('author'), pages: pages, read: readingStatus})
+    }
+
+    formDialog.close();
+    form.reset();
+    renderLibrary();
 });
 
-form.addEventListener('submit', function(event){
-     const bookExists = (currentbook) => {
-            return currentbook.title === bookTitle.value && currentbook.author === bookAuthor.value;
-        };
+//delete book
+libraryContainer.addEventListener("click", (event) => {
 
-      if(myLibrary.some(bookExists)) {
-        alert("book already exists in the library")
-        return;
-      }
-      else {
-        const readingStatus = document.querySelector('input[name="status"]:checked');
-        const userBook = new Book(bookTitle.value, bookAuthor.value, bookPages.value, readingStatus.value);
-        myLibrary.push(userBook);
-        display();
-      }
-      modal.close();
-      form.reset();
+    const deleteBtn = event.target.closest('[data-action="delete"]'); 
+    if (!deleteBtn) return; 
+
+    const bookCard = deleteBtn.closest('[data-uuid]')
+    const bookUUID = bookCard.getAttribute('data-uuid');
+
+    deleteBook(bookUUID);
+    renderLibrary();
 });
 
-openForm.addEventListener('click', ()=> {
-  modal.showModal();
+// read button toggle
+libraryContainer.addEventListener("click", (event) =>{
+
+    const readToggleBtn = event.target.closest('[data-action="readToggle"]'); 
+    if (!readToggleBtn) return; 
+
+    const bookCard = readToggleBtn.closest('[data-uuid]')
+    const bookUUID = bookCard.getAttribute('data-uuid');
+
+    const readingStatus = readToggleBtn.textContent; 
+
+    updateBook({uuid: bookUUID, read: !(readingStatus === 'read')})
+    renderLibrary();
 });
 
-closeForm.addEventListener('click', () => {
-  modal.close();
+// Edit book button
+libraryContainer.addEventListener('click', (event) => {
+
+    const editBookBtn = event.target.closest('[data-action="edit"]'); 
+    if (!editBookBtn) return; 
+
+    const bookCard = editBookBtn.closest('[data-uuid]')
+    editUUID = bookCard.getAttribute('data-uuid');
+
+    const book = getBookInfo(editUUID);
+
+    form.title.value = book.title;
+    form.author.value = book.author;
+    form.pages.value = book.pages;
+    form.querySelector(`input[value="${book.read ? 'read' : 'not-read'}"]`).checked = true;
+
+    formDialog.showModal();
+    formMode = 'edit';
+});
+
+addBookBtn.addEventListener('click', () => {
+  formDialog.showModal();
+  formMode = 'create';
+});
+
+resetFormBtn.addEventListener('click', () => {
+    form.reset();
+});
+
+closeFormBtn.addEventListener('click', () => {
+   formDialog.close();
 })
-
-

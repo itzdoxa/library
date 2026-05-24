@@ -4,54 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css"> 
     <script src="script.js" defer></script>
+
+</head>
 <body>
-    <div class="header">
-        <h1>Library</h1>
-        <button id="open-form">add book</button>
-    </div>
 
+    <dialog id="form-dialog">
+        <form>
+            <button id="close-form-btn" type="button">
+                <img src="img/close.svg" alt="close-form">
+            </button>
 
-    <dialog id="modal">
-    <form method="dialog" id="form">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required>
 
-    <div class="close-form">
-     <img src="images/close.svg" alt="close-form">
-    </div>
+                <label for="author">Author:</label>
+                <input type="text" id="author" name="author" required>
 
-     <div class="flex-space-between">
-     <label for="title">TITLE</label>
-     <input type="text" id="title" name="book-title" required>
-     </div>
+                <label for="pages">Pages:</label>
+                <input type="number" id="pages" name="pages" required>
 
-     <div class="flex-space-between">
-     <label for="author">AUTHOR</label>
-     <input type="text" id="author" name="author" required>
-     </div> 
+            <fieldset>
+                <legend>Reading status:</legend>
+                    <label for="read">read</label>
+                    <input type="radio" id="read" name="reading-status" value="read">
+                    <label for="not-read">not-read</label>
+                    <input type="radio" id="not-read" name="reading-status" value="not-read" checked>
+            </fieldset>
 
-     <div class="flex-space-between">
-     <label for="pages">PAGES</label>
-     <input type="number" id="pages" name="pages" required>
-     </div>
-
-     <div>
-     <h3>READ</h3>
-     <input type="radio" id="read" name="status" value="read" checked>
-     <label for="read">read</label>
-     <input type="radio" id="not-read" name="status" value="not-read">
-     <label for="not-read">not-read</label>
-     </div>
-    
-     <div class="flex-space-between">
-     <button type="submit" id="addBook">SUBMIT</button>
-     <button type="reset">RESET</button>
-    </div>
-
-    </form>
+            <button type="submit" id="submit-form-btn">Submit</button>
+        </form>
+        <button id="reset-form-btn" type="reset">Clear</button>
     </dialog>
 
-    <div id="container"></div>
+    <button id="add-book-btn">Add book</button>
 
+    <div id="library-container"></div>
+    
 </body>
 </html>
