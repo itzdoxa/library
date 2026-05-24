@@ -3,8 +3,6 @@
 
 A simple browser-based CRUD app to track books. Built as part of The Odin Project's JavaScript curriculum.
 
-[Live Demo](#) <!-- https://itzdoxa.github.io/library/ -->
-
 ---
 
 ## Features
